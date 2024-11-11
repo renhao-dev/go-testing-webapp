@@ -15,8 +15,10 @@ func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
+	mux.Use(app.AddIPToContext)
 
 	mux.Get("/", app.Home)
+	mux.Get("/showip", app.ShowIP)
 
 	return mux
 }
@@ -27,6 +29,8 @@ type TemplateData struct {
 }
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, t string, data *TemplateData) error {
+	data.IP = app.ipFromContext(r.Context())
+
 	parsedTempl, err := template.ParseFiles(path.Join(pathToTemplates, t))
 
 	if err != nil {
