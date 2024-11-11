@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -54,5 +55,27 @@ func Test_application_AddIPToContext(t *testing.T) {
 		t.Logf("%s : ", test.name)
 
 		handler.ServeHTTP(httptest.NewRecorder(), req)
+	}
+}
+
+func Test_application_ipFromContext(t *testing.T) {
+	tests := []struct {
+		key            contextKey
+		expectedResult string
+		val            string
+	}{
+		{"user_ip", "127.0.0.2", "127.0.0.2"},
+		{"use_ip", "127.0.0.2", ""},
+	}
+
+	for _, test := range tests {
+		ctx := context.WithValue(context.Background(), test.key, "127.0.0.2")
+
+		app := application{}
+		ip, _ := app.ipFromContext(ctx)
+
+		if ip != test.val {
+			t.Errorf("Expected value %s, got %s", test.val, ip)
+		}
 	}
 }

@@ -11,8 +11,10 @@ type contextKey string
 
 const contextIPKey contextKey = "user_ip"
 
-func (app *application) ipFromContext(ctx context.Context) string {
-	return ctx.Value(contextIPKey).(string)
+func (app *application) ipFromContext(ctx context.Context) (string, bool) {
+	val, ok := ctx.Value(contextIPKey).(string)
+
+	return val, ok
 }
 
 func (app *application) AddIPToContext(next http.Handler) http.Handler {
