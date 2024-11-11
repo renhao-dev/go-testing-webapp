@@ -18,7 +18,6 @@ func Test_application_handlers(t *testing.T) {
 
 	pathToTemplates = "./../../templates/"
 
-	app := application{}
 	routes := app.routes()
 
 	server := httptest.NewTLSServer(routes)

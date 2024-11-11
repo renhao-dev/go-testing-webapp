@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"path"
@@ -16,6 +17,7 @@ func (app *application) routes() http.Handler {
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(app.AddIPToContext)
+	mux.Use(app.Session.LoadAndSave)
 
 	mux.Get("/", app.Home)
 	mux.Post("/login", app.Login)
@@ -26,13 +28,14 @@ func (app *application) routes() http.Handler {
 
 type TemplateData struct {
 	IP   string
-	data map[string]any
+	Data map[string]any
 }
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, t string, data *TemplateData) error {
 	data.IP, _ = app.ipFromContext(r.Context())
+	fmt.Printf("Session val: %s \n", data.Data["test"].(string))
 
-	parsedTempl, err := template.ParseFiles(path.Join(pathToTemplates, t))
+	parsedTempl, err := template.ParseFiles(path.Join(pathToTemplates, t), path.Join(pathToTemplates, "layout.base.gohtml"))
 
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)

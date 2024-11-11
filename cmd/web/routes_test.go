@@ -14,7 +14,6 @@ func Test_application_routes(t *testing.T) {
 	}{
 		{"/", "GET"},
 	}
-	app := application{}
 	mux := app.routes()
 	routes := mux.(chi.Routes)
 
